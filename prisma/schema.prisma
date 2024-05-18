@@ -1,0 +1,44 @@
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "mongodb"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  // Defaults
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Fields
+  clerkId                 String                   @unique
+  email                   String                   @unique
+  phoneNumber             String                   @unique
+  firstName               String
+  lastName                String
+
+  birthdate               String?
+  avatarUrl               String?
+  chats                   Chat[]
+  @@map("users")
+}
+
+
+model Chat {
+  // Defaults
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Fields
+  message String
+  userId  String  @db.ObjectId
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("chats")
+}
